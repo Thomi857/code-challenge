@@ -5,10 +5,9 @@ const ramens = [
     { id: 4, name: "Shio Ramen", restaurant: "Ramen Ichiryu", image: "images/kojiro.jpg", rating: 5, comment: "Light and nicely spiced." },
     { id: 5, name: "Spicy Ramen", restaurant: "Spicy Ramen Bar", image: "images/gyukotsu.jpg", rating: 5, comment: "This is very tasty." }
 ];
-
 function displayRamens() {
     const ramenMenu = document.getElementById('ramen-menu');
-    ramenMenu.innerHTML = ''; // Clear existing images
+    ramenMenu.innerHTML = ''; 
     ramens.forEach(ramen => {
         const img = document.createElement('img');
         img.src = ramen.image;
@@ -18,8 +17,18 @@ function displayRamens() {
         ramenMenu.appendChild(img);
     });
 }
-
 function handleClick(ramen) {
+    const food = document.getElementById('ramen-overview');
+
+    let img = document.getElementById('my-image');
+    if (!img) {
+        img = document.createElement('img');
+        img.id = 'my-image';  
+        food.appendChild(img); 
+    }
+    img.src = ramen.image;
+    img.alt = ramen.name;
+    // Seting ramen details
     document.getElementById('ramen-name').innerText = ramen.name;
     document.getElementById('ramen-restaurant').innerText = ramen.restaurant;
     document.getElementById('ramen-rating').innerText = ramen.rating ? `Rating: ${ramen.rating}` : '';
@@ -29,40 +38,32 @@ function handleClick(ramen) {
 function addSubmitListener() {
     const form = document.getElementById('new-ramen-form');
     form.addEventListener('submit', (event) => {
-        event.preventDefault();
-        
-        const newRamen = {
-            name: document.getElementById('new-ramen-name').value,
-            restaurant: document.getElementById('new-ramen-restaurant').value,
-            image: document.getElementById('new-ramen-image').value,
-            rating: parseInt(document.getElementById('new-ramen-rating').value), // Ensure rating is a number
-            comment: document.getElementById('new-ramen-comment').value
-        };
+        event.preventDefault();  
 
+        const name = document.getElementById('new-ramen-name').value;
+        const restaurant = document.getElementById('new-ramen-restaurant').value;
+        const rating = parseInt(document.getElementById('new-ramen-rating').value);
+        const image = document.getElementById('new-ramen-image-url').value;
+        const comment = document.getElementById('new-ramen-comment').value;
+        console.log('Form submitted with values:', name, restaurant, rating, image, comment);
+
+        // new object.
+        const newRamen = {
+            id: ramens.length + 1,
+            name: name,
+            restaurant: restaurant,
+            image: image,
+            rating: rating, 
+            comment: comment
+        };
         ramens.push(newRamen);
-        displayRamens(); // Re-display ramen menu with the new item
-        form.reset(); // Reset the form fields
+        // Reset the form
+        form.reset();
+        displayRamens();  
     });
 }
-
-// Ensure the functions run on page load
-window.onload = () => {
-    displayRamens();      // Display initial ramen items
-    addSubmitListener();  // Set up form submit listener
-};
-function validateForm(newRamen) {
-    if (newRamen.rating < 1 || newRamen.rating > 5) {
-        alert('Please enter a rating between 1 and 5.');
-        return false;
-    }
-    if (!newRamen.image.match(/\.(jpg|jpeg|png|gif)$/)) {
-        alert('Please enter a valid image URL.');
-        return false;
-    }
-    return true;
-}
-if (validateForm(newRamen)) {
-    ramens.push(newRamen);
+function main() {
     displayRamens();
-    form.reset();
+    addSubmitListener();
 }
+document.addEventListener('DOMContentLoaded', main);
